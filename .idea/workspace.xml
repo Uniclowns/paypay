@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3b446092-8d67-418b-a940-c716017f250a" name="Changes" comment="" />
+    <list default="true" id="3b446092-8d67-418b-a940-c716017f250a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/editcompany.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/editcompanycategory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/editprofil.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edittransactioncategory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/Model/Bill.php" beforeDir="false" afterPath="$PROJECT_DIR$/App/Model/Bill.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/Model/CashFlow.php" beforeDir="false" afterPath="$PROJECT_DIR$/App/Model/CashFlow.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/Model/Company.php" beforeDir="false" afterPath="$PROJECT_DIR$/App/Model/Company.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/Model/CompanyCategory.php" beforeDir="false" afterPath="$PROJECT_DIR$/App/Model/CompanyCategory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/Model/TransactionCategory.php" beforeDir="false" afterPath="$PROJECT_DIR$/App/Model/TransactionCategory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App/Model/Users.php" beforeDir="false" afterPath="$PROJECT_DIR$/App/Model/Users.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/addbill.php" beforeDir="false" afterPath="$PROJECT_DIR$/addbill.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/addcashflow.php" beforeDir="false" afterPath="$PROJECT_DIR$/addcashflow.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/addtransactioncategory.php" beforeDir="false" afterPath="$PROJECT_DIR$/addtransactioncategory.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings">
+  <component name="ComposerSettings" doNotAsk="true">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -29,7 +47,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/laragon/www/daget&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/laragon/www/paypay&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -45,10 +63,24 @@
       <workItem from="1701078008908" duration="15000" />
       <workItem from="1701079105176" duration="5535000" />
       <workItem from="1701665687611" duration="22533000" />
+      <workItem from="1701756547972" duration="7317000" />
+      <workItem from="1701841139889" duration="15222000" />
+      <workItem from="1701932947348" duration="2504000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

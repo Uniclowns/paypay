@@ -8,7 +8,7 @@ class Users extends Model{
     protected string $email;
     protected string $name;
     protected string $pin;
-    protected int $balance = 0;
+    public int $balance = 0;
     public string $phone_num;
     protected string $profil_picture = "avatar.jpg";
     protected string $category_user = "standard";
@@ -40,8 +40,14 @@ class Users extends Model{
         return $stmt->execute();
     }
 
-    public function printQR(){
-        return false;
+    public function editProfile() : bool
+    {
+        $stmt = $this->db->prepare("UPDATE user SET email = :email, nama = :nama, profil_picture = :profil_picture WHERE phone_num = :phone_num");
+        $stmt->bindParam(':phone_num', $this->phone_num);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':nama', $this->name);
+        $stmt->bindParam(':profil_picture', $this->profil_picture);
+        return $stmt->execute();
     }
 
     public function setEmail(string $email): void
@@ -49,19 +55,9 @@ class Users extends Model{
         $this->email = $email;
     }
 
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
     public function setPin(string $pin): void
     {
         $this->pin = $pin;
-    }
-
-    public function getPin(): string
-    {
-        return $this->pin;
     }
 
     public function setBalance(int $balance): void
@@ -69,19 +65,9 @@ class Users extends Model{
         $this->balance = $balance;
     }
 
-    public function getBalance(): int
-    {
-        return $this->balance;
-    }
-
     public function setName(string $name): void
     {
         $this->name = $name;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function setPhoneNum(string $phone_num): void
@@ -93,30 +79,14 @@ class Users extends Model{
         }
     }
 
-    public function getPhoneNum(): string
-    {
-        return $this->phone_num;
-    }
-
     public function setProfilPicture(string $profil_picture): void
     {
         $this->profil_picture = $profil_picture;
     }
 
-    public function getProfilPicture(): string
-    {
-        return $this->profil_picture;
-    }
-
     public function setCategoryUser(string $category_user): void
     {
         $this->category_user = $category_user;
-    }
-
-
-    public function getCategoryUser(): string
-    {
-        return $this->category_user;
     }
 
     public function addUser(): bool

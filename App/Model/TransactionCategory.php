@@ -13,32 +13,14 @@ class TransactionCategory extends Model{
         $this->id = $id;
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function addCategory(){
-        $stmt = $this->db->prepare("INSERT INTO transaction_category (id, name) VALUES (:id, :name)");
-        $this->generateId();
-        $stmt->bindParam(':name', $this->name);
-        $stmt->bindParam(':id', $this->id);
-        return $stmt->execute();
-    }
-
     public function generateId()
     {
-        $sql = 'SELECT MAX(id) AS id FROM company_category';
+        $sql = 'SELECT MAX(id) AS id FROM transaction_category';
         $stmt = $this->db->prepare($sql);
         if ($stmt->execute()) {
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -46,6 +28,24 @@ class TransactionCategory extends Model{
         } else {
             return 0;
         }
+    }
+
+    public function addCategory()
+    {
+        $stmt = $this->db->prepare("INSERT INTO transaction_category (id, name) VALUES (:id, :name)");
+        $this->generateId();
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':id', $this->id);
+        return $stmt->execute();
+    }
+
+    public function editCategory()
+    {
+        $stmt = $this->db->prepare("UPDATE transaction_category SET name = :name WHERE id = :id");
+        $this->generateId();
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':id', $this->id);
+        return $stmt->execute();
     }
 
     public function details($id)

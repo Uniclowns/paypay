@@ -15,19 +15,9 @@ class Company extends Model{
         $this->id = $id;
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
     public function setName(string $name): void
     {
         $this->name = $name;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function setCompanyCategory(CompanyCategory $company_category): void
@@ -35,17 +25,22 @@ class Company extends Model{
         $this->company_category = $company_category;
     }
 
-    public function getCompanyCategory(): CompanyCategory
+    public function addCompany()
     {
-        return $this->company_category;
-    }
-
-    public function addCompany(){
         $this->generateId();
         $stmt = $this->db->prepare("INSERT INTO company(id, company_name, company_category_id) VALUES (:id, :name, :company_category)");
         $stmt->bindParam(':id', $this->id);
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':company_category', $this->company_category->id);
+        return $stmt->execute();
+    }
+
+    public function editCompany()
+    {
+        $stmt = $this->db->prepare("UPDATE company SET company_name = :name, company_category_id = :com_cat_id WHERE id = :id");
+        $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':com_cat_id', $this->company_category->id);
         return $stmt->execute();
     }
 

@@ -13,26 +13,26 @@ class CompanyCategory extends Model{
         $this->id = $id;
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    public function getName(): string
+    public function addCategory()
     {
-        return $this->name;
-    }
-
-    public function addCategory(){
         $stmt = $this->db->prepare("INSERT INTO company_category (id, name) VALUES (:id, :name)");
         $this->generateId();
         $stmt->bindParam(':id', $this->id);
         $stmt->bindParam(':name', $this->name);
+        return $stmt->execute();
+    }
+
+    public function editCategory()
+    {
+        $stmt = $this->db->prepare("UPDATE company_category SET name = :name WHERE id = :id");
+        $this->generateId();
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':id', $this->id);
         return $stmt->execute();
     }
 

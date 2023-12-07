@@ -5,7 +5,7 @@ use App\View;
 
 require 'vendor/autoload.php';
 
-$nama = "QRIS";
+$nama = "Receive Money";
 
 $company_category = new TransactionCategory();
 $company_category->setName($nama);
