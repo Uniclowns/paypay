@@ -4,14 +4,16 @@ namespace App\Model;
 use App\Model\Model;
 use PDO;
 
-class Users extends Model{
+abstract class Users extends Model{
     protected string $email;
     protected string $name;
     protected string $pin;
     public int $balance = 0;
     public string $phone_num;
-    protected string $profil_picture = "avatar.jpg";
-    protected string $category_user = "standard";
+    protected string $profil_picture;
+    protected string $category_user;
+
+    public CashFlow $cash_flow;
 
     public function login(){
         $stmt = $this->db->prepare("SELECT * FROM user WHERE phone_num = :phone_num");
@@ -79,14 +81,20 @@ class Users extends Model{
         }
     }
 
-    public function setProfilPicture(string $profil_picture): void
+    public function setProfilPicture(): void
     {
-        $this->profil_picture = $profil_picture;
+        $this->profil_picture = "avatar.jpg";
     }
 
-    public function setCategoryUser(string $category_user): void
+    public function setCategoryUser(): void
     {
-        $this->category_user = $category_user;
+        $this->category_user = "Standard";
+    }
+
+    public function getCategoryUser()
+    {
+        $this->details($this->phone_num);
+        return $this->category_user;
     }
 
     public function addUser(): bool
@@ -119,4 +127,11 @@ class Users extends Model{
             $user = null;
         }
     }
+
+    public function topUp()
+    {
+        $this->cash_flow->topUp();
+    }
+
+    abstract public function transfer();
 }

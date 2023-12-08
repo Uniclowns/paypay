@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model;
 
 use App\Model\TransactionCategory;
@@ -7,9 +8,11 @@ use App\Model\Bill;
 use App\Model\Company;
 
 use PDO;
+
 date_default_timezone_set("Asia/Jakarta");
 
-class CashFlow extends Model{
+class CashFlow extends Model
+{
     public int $id;
     protected string $date;
     protected float $credit;
@@ -17,7 +20,7 @@ class CashFlow extends Model{
     protected string $status;
     public float $temp;
     protected Users $user;
-    protected TransactionCategory $transaction_category;
+    public TransactionCategory $transaction_category;
     public Bill $bill;
     protected Company $company;
     public $cashflow;
@@ -38,15 +41,20 @@ class CashFlow extends Model{
             $this->debit = 0;
             $this->user->details($this->user->phone_num);
             $this->temp = $this->user->balance - $this->credit;
-        } else if($characters[0] === '+'){
+        } else if ($characters[0] === '+') {
             $this->status = "Debit";
             $this->debit = (int)implode('', array_slice($characters, 1));
             $this->credit = 0;
             $this->user->details($this->user->phone_num);
             $this->temp = $this->user->balance + $this->debit;
-        }else {
+        } else {
             false;
         }
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
     }
 
     public function setUser(Users $user): void
@@ -60,7 +68,8 @@ class CashFlow extends Model{
     }
 
 
-    public function setCompany (Company $company){
+    public function setCompany(Company $company)
+    {
         $this->company = $company;
     }
 
@@ -103,7 +112,7 @@ class CashFlow extends Model{
         }
     }
 
-    public function addCashFlow()
+    public function topUp()
     {
         $stmt = $this->db->prepare("INSERT INTO cashflow (id, date, credit, debit, status, phone_num, transaction_category_id) VALUES (:id, :date, :credit, :debit, :status, :phone_num, :transaction_category)");
         $this->generateId();
@@ -115,40 +124,48 @@ class CashFlow extends Model{
         $stmt->bindParam(':phone_num', $this->user->phone_num);
         $stmt->bindParam(':transaction_category', $this->transaction_category->id);
         $stmt2 = $this->db->prepare("UPDATE user SET balance = :temp WHERE phone_num = :user");
+        if ($stmt->execute()) {
+            $stmt2->bindParam(':temp', $this->temp);
+            $stmt2->bindParam(':user', $this->user->phone_num);
+            return $stmt2->execute();
+        }
+    }
 
-        if  ($stmt->execute()){
-            if($this->status == 'Debit')
-            {
-                $stmt2->bindParam(':temp', $this->temp);
-                $stmt2->bindParam(':user', $this->user->phone_num);
-                return $stmt2->execute();
-            }
-            else if($this->status == 'Credit')
-            {
-                $stmt3 = $this->db->prepare("INSERT INTO bill (id, billing_date, amount, admin_fee, total_amount, company_id, phone_num, cashflow_id) VALUES (:id, :billing_date, :amount, :admin_fee, :total_amount, :company, :phone_num, :cashflow)");
-                $this->generateIdBill();
-                $stmt3->bindParam(':id', $this->bill->id);
-                $stmt3->bindParam(':billing_date', $this->date);
-                $stmt3->bindParam(':amount', $this->credit);
-                $this->bill->setAdminFee();
-                $stmt3->bindParam(':admin_fee', $this->bill->admin_fee);
-                $this->bill->setTotalAmount($this->credit);
-                $stmt3->bindParam(':total_amount', $this->bill->total_amount);
-                $stmt3->bindParam(':company', $this->company->id);
-                $stmt3->bindParam(':phone_num', $this->user->phone_num);
-                $stmt3->bindParam(':cashflow', $this->id);
-                $stmt3->execute();
+    public function paymentBill()
+    {
+        $stmt = $this->db->prepare("INSERT INTO cashflow (id, date, credit, debit, status, phone_num, transaction_category_id) VALUES (:id, :date, :credit, :debit, :status, :phone_num, :transaction_category)");
+        $this->generateId();
+        $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(':date', $this->date);
+        $stmt->bindParam(':credit', $this->credit);
+        $stmt->bindParam(':debit', $this->debit);
+        $stmt->bindParam(':status', $this->status);
+        $stmt->bindParam(':phone_num', $this->user->phone_num);
+        $stmt->bindParam(':transaction_category', $this->transaction_category->id);
+        $stmt2 = $this->db->prepare("UPDATE user SET balance = :temp WHERE phone_num = :user");
+        if ($stmt->execute()) {
+            $stmt3 = $this->db->prepare("INSERT INTO bill (id, billing_date, amount, admin_fee, total_amount, company_id, phone_num, cashflow_id) VALUES (:id, :billing_date, :amount, :admin_fee, :total_amount, :company, :phone_num, :cashflow)");
+            $this->generateIdBill();
+            $stmt3->bindParam(':id', $this->bill->id);
+            $stmt3->bindParam(':billing_date', $this->date);
+            $stmt3->bindParam(':amount', $this->credit);
+            $this->bill->setAdminFee();
+            $stmt3->bindParam(':admin_fee', $this->bill->admin_fee);
+            $this->bill->setTotalAmount($this->credit);
+            $stmt3->bindParam(':total_amount', $this->bill->total_amount);
+            $stmt3->bindParam(':company', $this->company->id);
+            $stmt3->bindParam(':phone_num', $this->user->phone_num);
+            $stmt3->bindParam(':cashflow', $this->id);
+            $stmt3->execute();
 
-                $this->bill->details($this->bill->id);
-                $this->user->details($this->user->phone_num);
+            $this->bill->details($this->bill->id);
+            $this->user->details($this->user->phone_num);
 
-                $temp = $this->user->balance - $this->bill->total_amount;
-
-                $stmt2->bindParam(':temp', $temp);
-                $stmt2->bindParam(':user', $this->user->phone_num);
-                return $stmt2->execute();
-            }
+            $temp = $this->user->balance - $this->bill->total_amount;
+            
+            $stmt2->bindParam(':temp', $temp);
+            $stmt2->bindParam(':user', $this->user->phone_num);
+            return $stmt2->execute();
         }
     }
 }
-
