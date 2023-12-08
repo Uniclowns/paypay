@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model;
 
 use App\Model\CashFlow;
@@ -10,7 +11,8 @@ use App\View;
 
 use PDO;
 
-class Bill extends Model{
+class Bill extends Model
+{
     public int $id;
     public string $billing_date;
     public int $amount;
@@ -30,9 +32,6 @@ class Bill extends Model{
         $this->user = $user;
     }
 
-    /**
-     * @param int $admin_fee
-     */
     public function setAdminFee(): void
     {
         $this->admin_fee = 500;
@@ -58,7 +57,7 @@ class Bill extends Model{
         $this->company = $company;
     }
 
-    public function details($id)
+    public function details($id) : void
     {
         $stmt = $this->db->prepare("SELECT * FROM bill WHERE id=$id");
         if ($stmt->execute()) {
@@ -67,5 +66,30 @@ class Bill extends Model{
         } else {
             $bill = null;
         }
+    }
+
+    public function view() : array
+    {
+    $stmt = $this->db->prepare("SELECT 
+    `billing_date`,
+    `amount`, 
+    `admin_fee`,
+    `total_amount`, 
+    `company`.`company_name`, 
+    `user`.`nama`, 
+    `user`.`phone_num`,
+    `cashflow`.`status`, 
+    `transaction_category`.`name` 
+    FROM bill 
+    LEFT JOIN company ON company.id = bill.company_id
+    LEFT JOIN user ON user.phone_num = bill.phone_num
+    LEFT JOIN cashflow ON cashflow.id = bill.cashflow_id
+    LEFT JOIN transaction_category ON transaction_category.id = cashflow.transaction_category_id");
+        if ($stmt->execute()) {
+            $temp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $temp = null;
+        }
+        return $temp;
     }
 }

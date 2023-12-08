@@ -5,17 +5,18 @@ use App\Model\Model;
 use PDO;
 
 abstract class Users extends Model{
+    public string $phone_num;
     protected string $email;
     protected string $name;
     protected string $pin;
-    public int $balance = 0;
-    public string $phone_num;
+    public int $balance;
     protected string $profil_picture;
     protected string $category_user;
 
     public CashFlow $cash_flow;
 
-    public function login(){
+    public function login() : bool
+    {
         $stmt = $this->db->prepare("SELECT * FROM user WHERE phone_num = :phone_num");
         $stmt->bindParam(':phone_num', $this->phone_num);
         if ($stmt->execute() === true){
@@ -29,7 +30,8 @@ abstract class Users extends Model{
         }
     }
 
-    public function logout(){
+    public function logout() : bool
+    {
         return false;
     }
 
@@ -62,9 +64,9 @@ abstract class Users extends Model{
         $this->pin = $pin;
     }
 
-    public function setBalance(int $balance): void
+    public function setBalance(): void
     {
-        $this->balance = $balance;
+        $this->balance = 0;
     }
 
     public function setName(string $name): void
@@ -91,7 +93,7 @@ abstract class Users extends Model{
         $this->category_user = "Standard";
     }
 
-    public function getCategoryUser()
+    public function getCategoryUser() : string
     {
         $this->details($this->phone_num);
         return $this->category_user;
@@ -111,7 +113,7 @@ abstract class Users extends Model{
         return $stmt->execute();
     }
 
-    public function details($id)
+    public function details($id) : void
     {
         $stmt = $this->db->prepare("SELECT * FROM user WHERE phone_num=$id");
         if ($stmt->execute()) {
@@ -128,9 +130,37 @@ abstract class Users extends Model{
         }
     }
 
-    public function topUp()
+    public function topUp() : bool
     {
-        $this->cash_flow->topUp();
+        return $this->cash_flow->topUp();
+    }
+
+    public function upgradeCategory() : bool
+    {
+       $this->details($this->phone_num);
+       if ($this->category_user != 'Premium')
+       {
+        $stmt = $this->db->prepare("UPDATE user SET category_user = :category_user WHERE phone_num = :phone_num");
+        $temp = "Premium";
+        $stmt->bindParam(':category_user', $temp);
+        $stmt->bindParam(':phone_num', $this->phone_num);
+        return $stmt->execute();
+       }
+       else 
+       {
+        return false;
+       }
+    }
+
+    public function view() : array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM `paypay`.`user`");
+        if ($stmt->execute()) {
+            $temp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $temp = null;
+        }
+        return $temp;
     }
 
     abstract public function transfer();

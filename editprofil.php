@@ -1,10 +1,10 @@
 <?php
-use App\Model\Users;
+use App\Model\UserStandard;
 use App\View;
 
 require_once 'vendor/autoload.php';
 
-$user = new Users();
+$user = new UserStandard();
 $user->setPhoneNum("08123456789");
 $user->setName("Gerd");
 $user->setEmail("carsenwilmerganteng123@gmail.com");

@@ -18,7 +18,7 @@ class TransactionCategory extends Model{
         $this->name = $name;
     }
 
-    public function generateId()
+    public function generateId() : void
     {
         $sql = 'SELECT MAX(id) AS id FROM transaction_category';
         $stmt = $this->db->prepare($sql);
@@ -26,11 +26,11 @@ class TransactionCategory extends Model{
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->id = $data['id'] + 1;
         } else {
-            return 0;
+            0;
         }
     }
 
-    public function addCategory()
+    public function addCategory() : bool
     {
         $stmt = $this->db->prepare("INSERT INTO transaction_category (id, name) VALUES (:id, :name)");
         $this->generateId();
@@ -39,7 +39,7 @@ class TransactionCategory extends Model{
         return $stmt->execute();
     }
 
-    public function editCategory()
+    public function editCategory() : bool
     {
         $stmt = $this->db->prepare("UPDATE transaction_category SET name = :name WHERE id = :id");
         $this->generateId();
@@ -48,7 +48,7 @@ class TransactionCategory extends Model{
         return $stmt->execute();
     }
 
-    public function details($id)
+    public function details($id) : void
     {
         $stmt = $this->db->prepare("SELECT * FROM transaction_category WHERE id=$id");
         if($stmt->execute()) {
@@ -58,6 +58,18 @@ class TransactionCategory extends Model{
         } else {
             $category = null;
         }
+    }
+
+    public function view() : array
+    {
+        $stmt = $this->db->prepare("SELECT `name` FROM transaction_category");
+        if ($stmt->execute()) {
+            $temp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $temp = null;
+        }
+
+        return $temp;
     }
 
 

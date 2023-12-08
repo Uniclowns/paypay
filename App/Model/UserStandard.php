@@ -6,7 +6,7 @@ use PDO;
 
 class UserStandard extends Users
 {
-    public function transfer()
+    public function transfer() : bool
     {
         return false;
     }

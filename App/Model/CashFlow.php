@@ -52,7 +52,7 @@ class CashFlow extends Model
         }
     }
 
-    public function getStatus()
+    public function getStatus() : string
     {
         return $this->status;
     }
@@ -68,12 +68,12 @@ class CashFlow extends Model
     }
 
 
-    public function setCompany(Company $company)
+    public function setCompany(Company $company) : void
     {
         $this->company = $company;
     }
 
-    public function details($id)
+    public function details($id) : void
     {
         $stmt = $this->db->prepare("SELECT * FROM cashflow WHERE id=$id");
         if ($stmt->execute()) {
@@ -90,29 +90,29 @@ class CashFlow extends Model
         }
     }
 
-    public function generateId()
+    public function generateId() : void
     {
         $stmt = $this->db->prepare("SELECT MAX(id) AS id FROM cashflow");
         if ($stmt->execute()) {
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->id = $data['id'] + 1;
         } else {
-            return 0;
+           0;
         }
     }
 
-    public function generateIdBill()
+    public function generateIdBill() : void
     {
         $stmt = $this->db->prepare("SELECT MAX(id) AS id FROM bill");
         if ($stmt->execute()) {
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->bill->id = $data['id'] + 1;
         } else {
-            return 0;
+            0;
         }
     }
 
-    public function topUp()
+    public function topUp() : bool
     {
         $stmt = $this->db->prepare("INSERT INTO cashflow (id, date, credit, debit, status, phone_num, transaction_category_id) VALUES (:id, :date, :credit, :debit, :status, :phone_num, :transaction_category)");
         $this->generateId();
@@ -131,7 +131,7 @@ class CashFlow extends Model
         }
     }
 
-    public function paymentBill()
+    public function paymentBill() : bool 
     {
         $stmt = $this->db->prepare("INSERT INTO cashflow (id, date, credit, debit, status, phone_num, transaction_category_id) VALUES (:id, :date, :credit, :debit, :status, :phone_num, :transaction_category)");
         $this->generateId();
@@ -167,5 +167,26 @@ class CashFlow extends Model
             $stmt2->bindParam(':user', $this->user->phone_num);
             return $stmt2->execute();
         }
+    }
+
+    public function view() : array 
+    {
+    $stmt = $this->db->prepare("SELECT 
+    `date`,
+    `credit`, 
+    `debit`,
+    `status`, 
+    `user`.`nama`, 
+    `user`.`phone_num`, 
+    `transaction_category`.`name` 
+    FROM cashflow 
+    LEFT JOIN user ON user.phone_num = cashflow.phone_num
+    LEFT JOIN transaction_category ON transaction_category.id = cashflow.transaction_category_id");
+        if ($stmt->execute()) {
+            $temp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $temp = null;
+        }
+        return $temp;
     }
 }
