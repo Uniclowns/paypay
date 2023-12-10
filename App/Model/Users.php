@@ -180,5 +180,16 @@ abstract class Users extends Model
         return $temp;
     }
 
+    public function all() : array 
+    {
+         $stmt = $this->db->prepare("SELECT * FROM user");
+        if ($stmt->execute()) {
+            $temp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $temp = null;
+        }
+        return $temp;
+    }
+
     abstract public function transfer();
 }
