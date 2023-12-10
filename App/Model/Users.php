@@ -1,10 +1,12 @@
-<?php 
+<?php
+
 namespace App\Model;
 
 use App\Model\Model;
 use PDO;
 
-abstract class Users extends Model{
+abstract class Users extends Model
+{
     public string $phone_num;
     protected string $email;
     protected string $name;
@@ -15,13 +17,13 @@ abstract class Users extends Model{
 
     public CashFlow $cash_flow;
 
-    public function login() : bool
+    public function login(): bool
     {
         $stmt = $this->db->prepare("SELECT * FROM user WHERE phone_num = :phone_num");
         $stmt->bindParam(':phone_num', $this->phone_num);
-        if ($stmt->execute() === true){
+        if ($stmt->execute() === true) {
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
-            if(password_verify($this->pin, $data["pin"])){
+            if (password_verify($this->pin, $data["pin"])) {
                 return true;
             }
         } else {
@@ -30,12 +32,12 @@ abstract class Users extends Model{
         }
     }
 
-    public function logout() : bool
+    public function logout(): bool
     {
         return false;
     }
 
-    public function changePin() : bool
+    public function changePin(): bool
     {
         $stmt = $this->db->prepare("UPDATE user SET pin = :pin WHERE phone_num = :phone_num");
         $stmt->bindParam(':phone_num', $this->phone_num);
@@ -44,7 +46,7 @@ abstract class Users extends Model{
         return $stmt->execute();
     }
 
-    public function editProfile() : bool
+    public function editProfile(): bool
     {
         $stmt = $this->db->prepare("UPDATE user SET email = :email, nama = :nama, profil_picture = :profil_picture WHERE phone_num = :phone_num");
         $stmt->bindParam(':phone_num', $this->phone_num);
@@ -76,9 +78,9 @@ abstract class Users extends Model{
 
     public function setPhoneNum(string $phone_num): void
     {
-        if($phone_num >= 628000){
+        if ($phone_num >= 628000) {
             $this->phone_num = $phone_num;
-        }else{
+        } else {
             echo "Nomor hape anda tidak dimulai dengan 628";
         }
     }
@@ -93,7 +95,7 @@ abstract class Users extends Model{
         $this->category_user = "Standard";
     }
 
-    public function getCategoryUser() : string
+    public function getCategoryUser(): string
     {
         $this->details($this->phone_num);
         return $this->category_user;
@@ -113,7 +115,7 @@ abstract class Users extends Model{
         return $stmt->execute();
     }
 
-    public function details($id) : void
+    public function details($id): void
     {
         $stmt = $this->db->prepare("SELECT * FROM user WHERE phone_num=$id");
         if ($stmt->execute()) {
@@ -130,31 +132,46 @@ abstract class Users extends Model{
         }
     }
 
-    public function topUp() : bool
+    public function topUp(): bool
     {
         return $this->cash_flow->topUp();
     }
 
-    public function upgradeCategory() : bool
+    public function upgradeCategory(): bool
     {
-       $this->details($this->phone_num);
-       if ($this->category_user != 'Premium')
-       {
-        $stmt = $this->db->prepare("UPDATE user SET category_user = :category_user WHERE phone_num = :phone_num");
-        $temp = "Premium";
-        $stmt->bindParam(':category_user', $temp);
-        $stmt->bindParam(':phone_num', $this->phone_num);
-        return $stmt->execute();
-       }
-       else 
-       {
-        return false;
-       }
+        $this->details($this->phone_num);
+        if ($this->category_user != 'Premium') {
+            $stmt = $this->db->prepare("UPDATE user SET category_user = :category_user WHERE phone_num = :phone_num");
+            $temp = "Premium";
+            $stmt->bindParam(':category_user', $temp);
+            $stmt->bindParam(':phone_num', $this->phone_num);
+            return $stmt->execute();
+        } else {
+            return false;
+        }
     }
 
-    public function view() : array
+    public function view(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM `paypay`.`user`");
+        $stmt = $this->db->prepare("SELECT `user`.`nama`,
+       `user`.`phone_num`,
+       `user`.`balance`,
+       SUM(`cashflow`.`debit`) AS total_debit,
+       SUM(`cashflow`.`credit`) AS total_credit
+       FROM `cashflow`
+       LEFT JOIN `user` ON `cashflow`.`phone_num` = `user`.`phone_num`
+       GROUP BY `user`.`nama`, `user`.`phone_num`, `user`.`balance`;");
+        if ($stmt->execute()) {
+            $temp = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $temp = null;
+        }
+        return $temp;
+    }
+
+    public function home(): array
+    {
+        $stmt = $this->db->prepare("SELECT `nama`, `phone_num`, `balance`, `profil_picture` FROM `paypay`.`user`");
         if ($stmt->execute()) {
             $temp = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {

@@ -12,7 +12,7 @@ use App\View;
 require 'vendor/autoload.php';
 
 $phone_num = "08123456789";
-$transaction_category_id = "4";
+$transaction_category_id = "1";
 $company_category_id = 1;
 $company_id = 1;
 
@@ -38,7 +38,7 @@ $cash_flow->cashflow = $cash_flow;
 $cash_flow->bill = $bill;
 $cash_flow->setDate();
 $cash_flow->setUser($user);
-$cash_flow->setCreDebStat("-1000");
+$cash_flow->setCreDebStat("-5000");
 $cash_flow->setTransactionCategory($transaction_category);
 
 if($cash_flow->getStatus() == "Debit"){
@@ -52,11 +52,11 @@ if($cash_flow->getStatus() == "Debit"){
         View::json($user->transfer());
     }else if($user->getCategoryUser() == "Premium")
     {
+        $user->cash_flow = $cash_flow;
         $bill->setCashflow($cash_flow);
         $bill->setCompany($company);
         $bill->setUser($user);
         $bill->setCashflow($cash_flow);
-        $user->cash_flow = $cash_flow;
         View::json($user->transfer());
     }
 }
