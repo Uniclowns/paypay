@@ -182,7 +182,8 @@ abstract class Users extends Model
 
     public function all() : array 
     {
-         $stmt = $this->db->prepare("SELECT * FROM user");
+         $stmt = $this->db->prepare("SELECT * FROM user WHERE phone_num = :phone_num");
+         $stmt->bindParam(':phone_num', $this->phone_num);
         if ($stmt->execute()) {
             $temp = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
